@@ -1,0 +1,47 @@
+.select{
+    display: flex;
+    margin-left: 70px;
+    margin-right: 70px;
+    justify-content: center;
+    
+}
+
+.selectOrder{
+    width:200px;
+    margin-top: -20px;
+    height: 2.0rem;
+    color: black;
+    font-weight: bold;
+    padding-right: 5px;
+    font-size: 15px;
+    margin-left: 5px;
+}
+
+option{
+  text-align: center;
+}
+
+p{
+    margin-top: -20px;
+    margin-right: 10px;
+   font-weight: bold;
+   margin-left: 1px;
+    color: white;
+    font-size: 20px;
+    text-shadow: 1px 1px 2px black;
+    
+}
+
+.buttonOrder{
+    background-color: grey;
+    color: white;
+    font-weight: bold;
+    margin-top: -22px;
+    height: 2.2rem;
+    margin-left: 5px;
+}
+
+.buttonOrder:hover{
+    background-color: lightgrey;
+    color: blue;
+}

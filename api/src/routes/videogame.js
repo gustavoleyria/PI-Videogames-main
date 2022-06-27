@@ -11,8 +11,8 @@ const router = Router();
 // Ejemplo: router.use('/auth', authRouter);
 router.get('/', (req,res,next) =>{
     videogameApi = axios.get(`https://api.rawg.io/api/games?key=${DB_KEY}&page_size=40`);
-    call1 = axios.get(`https://api.rawg.io/api/games?key=${DB_KEY}&page=2&page_size=40`);
-    call2 = axios.get(`https://api.rawg.io/api/games?key=${DB_KEY}&page=3&page_size=20`);        
+    call1 = axios.get(`https://api.rawg.io/api/games?key=${DB_KEY}&page=5&page_size=40`);
+    call2 = axios.get(`https://api.rawg.io/api/games?key=${DB_KEY}&page=8&page_size=20`);        
     videogameDB = Videogame.findAll({
         include: [
             {
@@ -44,30 +44,38 @@ Promise.all([
     //gameApi.concat(c1,c2)
     let filteredVideoApi = gameApi.data.results.map((videogame) =>{
         return {
+            id: videogame.id,
             image: videogame.background_image,
             name: videogame.name,
-            genres: videogame.genres.map(gener => gener.name)
+            genres: videogame.genres.map(gener => gener.name),
+            rating: videogame.rating
         }
     })
     let filteredVideoApic1 = c1.data.results.map((videogame) =>{
         return {
+            id: videogame.id,
             image: videogame.background_image,
             name: videogame.name,
-            genres: videogame.genres.map(gener => gener.name)
+            genres: videogame.genres.map(gener => gener.name),
+            rating: videogame.rating
         }
     })
     let filteredVideoApic2 = c2.data.results.map((videogame) =>{
         return {
+            id: videogame.id,
             image: videogame.background_image,
             name: videogame.name,
-            genres: videogame.genres.map(gener => gener.name)
+            genres: videogame.genres.map(gener => gener.name),
+            rating: videogame.rating
         }
     })
     let filteredVideoDB = gameDB.map(db => {
         return{
+            id: db.id,
             image: db.background_image,
             name: db.name,
-            genres: db.genres.map(gener => gener.name)
+            genres: db.genres.map(gener => gener.name),
+            rating: db.rating
         }
     })
     //console.log(gameApi.data);
@@ -85,7 +93,7 @@ Promise.all([
             return 0;
     });*/ 
     console.log(allVideoGame.length)    
-    res.send(allVideoGame)
+    res.status(200).send(allVideoGame)
 })
 .catch(error => next(error))
 })
@@ -121,6 +129,7 @@ router.get('/search',async(req,res,next) =>{
         });
         let filteredVideoApi = videogameApi.data.results.map((videogame) =>{
             return {
+                id: videogame.id,
                 image: videogame.background_image,
                 name: videogame.name,
                 genres: videogame.genres.map(gener => gener.name)
@@ -128,6 +137,7 @@ router.get('/search',async(req,res,next) =>{
         })
         let filteredVideoDB = videogameDB.map(db => {
             return{
+                id: db.id,
                 image: db.background_image,
                 name: db.name,
                 genres: db.genres.map(gener => gener.name)
@@ -160,6 +170,7 @@ router.get('/:id',async(req,res,next) =>{
             include: [Genre,Platform]
         })
         videogame = {
+            id: videogame2.id,
             image: videogame2.background_image,
             name: videogame2.name,
             genres: videogame2.genres.map(gener => gener.name),
@@ -171,6 +182,7 @@ router.get('/:id',async(req,res,next) =>{
     }else{
         let videogame2 = await axios.get(`https://api.rawg.io/api/games/${id}?key=${DB_KEY}`)
         videogame = {
+            id: videogame2.id,
             image: videogame2.data.background_image,
             name: videogame2.data.name,
             genres: videogame2.data.genres.map(gener => gener.name),
@@ -186,48 +198,127 @@ router.get('/:id',async(req,res,next) =>{
 
 router.post('/', async(req,res,next) =>{
     try{
-        const {id,name,description,release_date, rating} = req.body;
+        const {id,name,description,release_date, rating, platforms, genres, background_image } = req.body;
         const newVideogame = await Videogame.create({
             name,
             description,
             release_date, 
-            rating
+            rating,
+            background_image
         })
+console.log(genres)
+
+        if (newVideogame && genres && Array.isArray(genres))
+                {
+                    const promisesGenres = genres.map(async (g) => {
+                        let genre = await Genre.findAll({
+                            where: { name: g}
+                            });
+                        
+                        return newVideogame.setGenres(genre); //la asociacion la realiza como objeto
+                        });  
+
+                    await Promise.all(promisesGenres); 
+                } // end-if
+
+
+        if (newVideogame && platforms && Array.isArray(platforms))
+        {
+            const promisesPlatforms = platforms.map(async (platf) => {
+                let platform = await Platform.findAll({
+                    where: { name: platf}
+                    });
+                
+                return newVideogame.setPlatforms(platform); //la asociacion la realiza como objeto
+                });  
+
+            await Promise.all(promisesPlatforms); 
+        } // end-if
+
+
+
+
         res.status(201).send(newVideogame)
     } catch(error){
         next(error)
     }
 })
 
-router.post('/:videogameId/genre/:genreId', async(req,res,next) =>{
+
+router.put('/update/:id', async (req, res, next) => {
+    const { id } = req.params
+    try {
+      const gameDB = await Videogame.findByPk(id,{
+        include: [Genre,Platform]
+    }) ;
+  
+      // filter req.body to remove empty values
+       const { body } = req;
+       const filteredBody = Object.keys(body).reduce((resultObj, key) => {
+         if(body[key] != ''){
+           resultObj[key] = body[key];
+           console.log(resultObj[key])
+           console.log(body[key])
+         }
+         return resultObj;
+       }, {});
+  
+       const updatedGameBD = await gameDB.update(filteredBody);
+      
+       if (updatedGameBD && body.genres && Array.isArray(body.genres))
+                {
+                    const promisesGenres = body.genres.map(async (g) => {
+                        let genre = await Genre.findAll({
+                            where: { name: g}
+                            });
+                        
+                        return updatedGameBD.setGenres(genre); //la asociacion la realiza como objeto
+                        });  
+
+                    await Promise.all(promisesGenres); 
+                } // end-if
+
+
+        if (updatedGameBD && body.platforms && Array.isArray(body.platforms))
+        {
+            const promisesPlatforms = body.platforms.map(async (platf) => {
+                let platform = await Platform.findAll({
+                    where: { name: platf}
+                    });
+                
+                return updatedGameBD.setPlatforms(platform); //la asociacion la realiza como objeto
+                });  
+
+            await Promise.all(promisesPlatforms); 
+        } // end-if
+
+      res.send(updatedGameBD)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+router.delete('/delete/:id', async(req,res,next) =>{
     try{
-        const {videogameId,genreId} = req.params;
-        const videogame = await Videogame.findByPk(videogameId);
-        await videogame.addGenre(genreId);
-        res.send(200)
-    } catch(error){
+        const {id} = req.params;
+        const gameDB = await Videogame.findByPk(id,{
+            include: [Genre,Platform]
+        }) 
+        const info = gameDB;
+
+        if (gameDB) {
+            Videogame.destroy({
+                where: {
+                    id: id
+                }
+            })
+            return res.send(console.log(`El juego ${info.name} fue borrado correctamente`))
+    } 
+        }catch(error){
         next(error)
     }
+   
 })
 
-router.post('/:videogameId/platform/:platformId', async(req,res,next) =>{
-    try{
-        const {videogameId,platformId} = req.params;
-        const videogame = await Videogame.findByPk(videogameId);
-        await videogame.addPlatform(platformId);
-        res.send(200)
-    } catch(error){
-        next(error)
-    }
-})
-/*
-router.put('/', (req,res,next) =>{
-    res.send('soy put /videogame')
-})
-
-router.delete('/', (req,res,next) =>{
-    res.send('soy delete /videogame')
-})
-*/
 
 module.exports = router;

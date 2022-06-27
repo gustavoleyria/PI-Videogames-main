@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { fetchGenre, fetchPlatform, postVideogame } from '../store/actions'
+import { fetchGenre, fetchPlatform, putVideogame } from '../store/actions'
 import { useDispatch, useSelector } from 'react-redux';
-import styleForm from './addVideogame.module.css';
+import styleForm from './upDateVideogame.module.css';
 import NavBarWH from './navBarWH';
 
 function validate(input) {
@@ -20,7 +20,7 @@ function validate(input) {
         errors.release_date = "Complete date"
     } else if (!/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(input.release_date)) { 
         errors.release_date = "Format error (yyyy/mm/dd)"
-    } 
+    }
     if (input.platforms.length < 1) {
         errors.platforms = "Enter platforms"
     }
@@ -31,23 +31,31 @@ function validate(input) {
 }
 
 
-export default function AddVideogameForm() {
+export default function UpDateVideogameForm() {
     const dispatch = useDispatch()
     const history = useHistory()
 
     const genres = useSelector((state) => state.genres)
     const platforms = useSelector((state) => state.platforms)
 
+    const details = useSelector((state) => state.detail)
+    console.log(details)
+    console.log(details.id)
+    console.log(details.description)
+    
+
+    const id = details.id;
+
 
     const [errors, setErrors] = useState({})
     const [input, setInput] = useState({
-        name: "",
-        description: "",
-        release_date: "",
-        rating: "",
-        background_image: "",
-        genres: [],
-        platforms: []
+        name: details.name,
+        description: `${details.description}`,
+        release_date: details.release_date,
+        rating: details.rating,
+        background_image: details.image,
+        genres: details.genres,
+        platforms: details.platforms
     })
 
 
@@ -93,8 +101,8 @@ export default function AddVideogameForm() {
             alert("Completar correctamente el formulario")
         } else {
             e.preventDefault();
-            dispatch(postVideogame(input))
-            alert("Videojuego Creado!!")
+            dispatch(putVideogame(id,input))
+            alert("Videojuego Actualizado!!")
             setInput({
                 name: "",
                 description: "",
@@ -148,7 +156,7 @@ export default function AddVideogameForm() {
     return (
         <div className={styleForm.backgroundAdd}>
             <NavBarWH/>
-            <h1 className={styleForm.h1Add}>CREATE GAME</h1>
+            <h1 className={styleForm.h1Add}>UPDATE GAME</h1>
             <form className={styleForm.formAdd} onSubmit={(e) => handleSubmit(e)}>
                 <div>
                     <label className={styleForm.labelAdd}>Name</label>
@@ -218,7 +226,7 @@ export default function AddVideogameForm() {
                     <textarea
                     className={styleForm.inputDescriptionAdd}
                         type="text"
-                        value={input.inputDescription}
+                        value={input.description}
                         name="description"
                         onChange={(e) => handleInputChange(e)}
                         rows="5" cols="45"
@@ -293,7 +301,7 @@ export default function AddVideogameForm() {
                         <button
                             type="submit"
                             className={styleForm.buttonAdd}
-                        >ADD VIDEOGAME
+                        >UpDate VIDEOGAME
                         </button>
                 }
             </form>

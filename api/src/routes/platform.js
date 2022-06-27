@@ -54,28 +54,11 @@ router.post('/', async (req,res,next) =>{
         })
         platformApi4 = await Platform.findAll()
         res.json(platformApi4)
-    }
-/*
-    try{
-        const{name} = req.body;
-        return Platform.create({name})
-        .then((newPlatform) =>{
-        res.status(201).send(newPlatform)
-    })
-    }*/catch(error){
+    }catch(error){
         next(error)
     }
 })
-/*
-router.put('/', (req,res,next) =>{
-    res.send('soy put /platform')
-})
 
-router.delete('/', (req,res,next) =>{
-    res.send('soy delete /platform')
-})
-
-*/
 
 
 

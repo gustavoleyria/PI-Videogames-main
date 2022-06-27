@@ -1,0 +1,25 @@
+export const ASCENDENTE = 'ascendente';
+export const DESCENDENTE = 'descendente';
+export const Strategy = 'Strategy';
+export const RPG = 'RPG';
+export const Casual = 'Casual';
+export const Arcade = 'Arcade';
+export const Racing = 'Racing';
+export const Fighting = 'Fighting';
+export const Board_Games = 'Board Games';
+export const Indie = 'Indie';
+export const Action = 'Action';
+export const Simulation = 'Simulation';
+export const Puzzle = 'Puzzle';
+export const Massively_Multiplayer = 'Massively Multiplayer';
+export const Sports = 'Sports';
+export const Card = 'Card';
+export const Educational = 'Educational';
+export const Adventure = 'Adventure';
+export const Shooter = 'Shooter';
+export const Platformer = 'Platformer';
+export const Family = 'Family';
+export const DB = 'DB';
+export const API = 'API';
+export const RESET = 'RESET';
+

@@ -1,26 +1,26 @@
 import {useState} from 'react';
+import './searchBar.css';
 import { searchVideogame } from '../store/actions';
 import { useDispatch } from 'react-redux';
 
 export default function SearchBar(){
     const [search, setSearch] = useState('')
     let dispatch = useDispatch()
+
     function onSubmit(e){
-        e.preventDefault();
-        dispatch(searchVideogame(search))
+       //e.preventDefault();
+       dispatch(searchVideogame(search))
+       setSearch('')
     }
 
     function onInputChange(e){
-        e.preventDefault()
+        //e.preventDefault()
         setSearch(e.target.value)
     }
-    
-  //  onChange={ (e) => onInputChange}
-  //onChange={onInputChange}
-    return <div>
-        <form onSubmit={onSubmit}>
-            <input type="text"  onChange={ (e) => onInputChange(e)} value={search}/>
-            <input type="submit" value="Buscar" />
-        </form>
+
+    return <div className='search'>
+        <input type="text"  onChange={onInputChange} placeholder="Search..." value={search}/>
+        <button type='submit' onClick={onSubmit} className='buttonSearch'>Search</button>
+        
     </div>
 }

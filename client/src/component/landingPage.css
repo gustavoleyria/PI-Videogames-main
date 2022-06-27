@@ -1,0 +1,49 @@
+.landingPage{
+    position: absolute;
+    left: 50%;
+    top: 33%;
+    transform: translate(-50%, -50%);
+    width:20%;
+    color: blanchedalmond;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 30px;
+    background-image: url(https://i.ytimg.com/vi/Ii-Ezbp9v_A/maxresdefault.jpg);
+    background-size: cover;
+    
+}
+
+
+@media screen and (max-width: 770px){
+    .landingPage{
+        position: absolute;
+        /*left: 50%;*/
+        top: 33%;
+        transform: translate(-50%, -50%);
+        /*width:30%;*/
+        color: blanchedalmond;
+        font-weight: bolder;
+        font-size: 15px;
+        background-image: url(https://i.ytimg.com/vi/Ii-Ezbp9v_A/maxresdefault.jpg);
+        background-size: cover;
+    }
+    }
+
+button:hover{
+    border-radius: 35%;
+}
+
+.html,body{
+    /* Para que funcione correctamente en Smartphones y Tablets */
+    height:100vh;
+}
+
+body{
+    background-image: url(https://www.elcineenlasombra.com/wp-content/uploads/2019/01/1-700x382.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    height: auto;
+    max-width: 100%;
+}

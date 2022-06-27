@@ -12,22 +12,7 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4
     },
     name: {
-        type: DataTypes.ENUM(
-          "PC",
-          "Xbox Series S/X",
-          "PlayStation 4",
-          "PlayStation 3",
-          "Xbox 360",
-          "Xbox One",
-          "PlayStation 5",
-          "Nintendo Switch",
-          "Linux",
-          "macOS",
-          "Android",
-          "iOS",
-          "Xbox",
-          "PS Vita",
-          "Web"),
+        type: DataTypes.STRING,
         allowNull: false,
         //unique: true
     }/*,
